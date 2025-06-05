@@ -73,7 +73,7 @@ async function fazerReserva(event) {
        
         carregarMesasParaSelect("numero_mesa");
     } catch (error) {
-        showMessage("Erro ao fazer reserva: " + error.message, true);
+        window.alert("Erro ao fazer reserva: " + error.message, true);
     }
 }
 
@@ -163,7 +163,7 @@ async function salvarEdicaoReservaCliente(event) {
         document.getElementById("consulta-form").dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
         carregarMesasParaSelect("numero_mesa");
     } catch (error) {
-        showMessage("Erro ao salvar alterações da reserva: " + error.message, true);
+        window.alert("Erro ao salvar alterações da reserva: " + error.message, true);
     }
 }
 async function excluirReservaCliente() {
