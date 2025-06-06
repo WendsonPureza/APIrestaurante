@@ -38,14 +38,61 @@ app.use("/relatorios", relatoriosRoutes);
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`Server listening at http://0.0.0.0:${port}`);
+  console.log("✅ Limpeza automática de reservas configurada");
 });
 
-process.on("SIGINT", () => {
-  db.close((err) => {
+// Função para limpar reservas e resetar contador
+function limparReservasAoFechar() {
+  // Primeiro limpa as reservas
+  db.run("DELETE FROM reservas", function(err) {
     if (err) {
-      console.error(err.message);
+      console.error('❌ Erro ao limpar reservas:', err.message);
+    } else {
+      console.log(`🧹 Reservas limpas automaticamente: ${this.changes} removidas`);
+      
+      // Depois reseta o contador para começar do ID 1
+      db.run("DELETE FROM sqlite_sequence WHERE name='reservas'", function(err) {
+        if (err) {
+          console.error('❌ Erro ao resetar contador:', err.message);
+        } else {
+          console.log('🔄 Contador de reservas resetado - próxima reserva será ID 1');
+        }
+      });
     }
-    console.log("Closed the database connection.");
-    process.exit(0);
   });
+}
+
+// Modificado para incluir limpeza de reservas
+process.on("SIGINT", () => {
+  console.log('\n🔄 Servidor encerrando... Limpando reservas...');
+  
+  limparReservasAoFechar();
+  
+  // Espera um pouco para a limpeza completar, depois fecha o banco
+  setTimeout(() => {
+    db.close((err) => {
+      if (err) {
+        console.error(err.message);
+      }
+      console.log("Closed the database connection.");
+      process.exit(0);
+    });
+  }, 1000); // Espera 1 segundo
+});
+
+// Adiciona suporte para SIGTERM também
+process.on("SIGTERM", () => {
+  console.log('\n🔄 Aplicação encerrando... Limpando reservas...');
+  
+  limparReservasAoFechar();
+  
+  setTimeout(() => {
+    db.close((err) => {
+      if (err) {
+        console.error(err.message);
+      }
+      console.log("Closed the database connection.");
+      process.exit(0);
+    });
+  }, 1000);
 });
