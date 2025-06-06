@@ -5,9 +5,9 @@ const db = new sqlite3.Database('./restaurante.db', (err) => {
         console.error("❌ Erro ao conectar ao banco:", err.message);
         return;
     }
-    console.log("🔗 Conectado ao banco SQLite");
-    console.log("🚀 Iniciando sistema de limpeza/gerenciamento de reservas...");
-    console.log("💡 Para implementar no frontend, use as funções de status!");
+    console.log("Conectado ao banco SQLite");
+    console.log("Iniciando sistema de limpeza/gerenciamento de reservas...");
+    console.log("Para implementar no frontend, use as funções de status!");
     verificarReservas();
 });
 
@@ -25,15 +25,15 @@ function verificarReservas() {
             return;
         }
         
-        console.log(`📊 ESTATÍSTICAS DAS RESERVAS:`);
-        console.log(`   Total: ${row.total}`);
-        console.log(`   🟡 Pendentes: ${row.pendentes}`);
-        console.log(`   ✅ Atendidas: ${row.atendidas}`);
-        console.log(`   ❌ Canceladas: ${row.canceladas}`);
+        console.log(`ESTATÍSTICAS DAS RESERVAS:`);
+        console.log(`Total: ${row.total}`);
+        console.log(`Pendentes: ${row.pendentes}`);
+        console.log(` Atendidas: ${row.atendidas}`);
+        console.log(` Canceladas: ${row.canceladas}`);
         
         db.get("SELECT seq FROM sqlite_sequence WHERE name='reservas'", (err, seqRow) => {
             if (seqRow) {
-                console.log(`🔢 Próximo ID seria: ${seqRow.seq + 1}`);
+                console.log(` Próximo ID seria: ${seqRow.seq + 1}`);
             }
             
             escolherOpcao();
@@ -42,7 +42,7 @@ function verificarReservas() {
 }
 
 function escolherOpcao() {
-    console.log("\n🔧 OPÇÕES DISPONÍVEIS:");
+    console.log("\n OPÇÕES DISPONÍVEIS:");
     console.log("1️⃣ - Resetar apenas o contador de IDs (manter reservas)");
     console.log("2️⃣ - Deletar todas as reservas E resetar IDs");
     console.log("3️⃣ - Marcar todas as pendentes como atendidas");
