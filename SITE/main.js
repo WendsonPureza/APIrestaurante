@@ -39,7 +39,7 @@ async function fetchAPI(endpoint, method = 'GET', data = null) {
         
         return result;
     } catch (error) {
-        console.error('API Error:', error);
+        console.error('API Error', error);
         throw error;
     }
 }

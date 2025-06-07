@@ -20,7 +20,7 @@ async function carregarGarcons() {
             selectGarcom.appendChild(option);
         });
     } catch (error) {
-        showMessage('Erro ao carregar garçons: ' + error.message, true);
+        window.alert('Erro ao carregar garçons' + error.message, true);
     }
 }
 async function carregarMesas() {
@@ -46,14 +46,14 @@ async function carregarMesas() {
             selectMesaLiberar.appendChild(option2);
         });
     } catch (error) {
-        showMessage('Erro ao carregar mesas: ' + error.message, true);
+        window.alert('Erro ao carregar mesas ' + error.message, true);
     }
 }
 async function buscarReserva(event) {
     event.preventDefault();
     const reservaId = document.getElementById('reserva_id').value;
     if (!reservaId) {
-        showMessage('Por favor, informe o número da reserva.', true);
+        showMessage('Por favor, informe o número da reserva', true);
         return;
     }
     try {
@@ -75,13 +75,13 @@ async function buscarReserva(event) {
         } else {
             document.getElementById('atendimento-form').style.display = 'none';
             if (reserva.status === 'atendida') {
-                showMessage('Esta reserva já foi atendida.', false);
+                showMessage('Esta reserva já foi atendida', false);
             } else if (reserva.status === 'cancelada') {
-                showMessage('Esta reserva foi cancelada.', true);
+                showMessage('Esta reserva foi cancelada', true);
             }
         }
     } catch (error) {
-        showMessage('Erro ao buscar reserva: ' + error.message, true);
+        window.alert('Erro ao buscar reserva' + error.message, true);
         document.getElementById('reserva-detalhes').style.display = 'none';
         document.getElementById('atendimento-form').style.display = 'none';
     }
@@ -91,7 +91,7 @@ async function atenderReserva(event) {
     const reservaId = document.getElementById('reserva_id_atender').value;
     const garcomNome = document.getElementById('garcom_nome').value;
     if (!reservaId || !garcomNome) {
-        showMessage('Por favor, selecione um garçom.', true);
+        showMessage('Por favor, selecione um garçom', true);
         return;
     }
     
@@ -101,7 +101,7 @@ async function atenderReserva(event) {
         buscarReserva({ preventDefault: () => {} });
         carregarMesas();
     } catch (error) {
-        showMessage('Erro ao atender reserva: ' + error.message, true);
+        showMessage('Erro ao atender reserva ' + error.message, true);
     }
 }
 
@@ -119,7 +119,7 @@ async function buscarReservasPorMesa(event) {
         const reservas = await fetchAPI(`/relatorios/mesa?numero_mesa=${numeroMesa}&data_inicio=${hoje}&data_fim=${umMesDepois}`);
         const listaReservas = document.getElementById('lista-reservas-mesa');
         if (reservas.length === 0) {
-            listaReservas.innerHTML = '<p>Não há reservas para esta mesa.</p>';
+            listaReservas.innerHTML = '<p>Não há reservas para esta mesa</p>';
         } else {
             let html = '<table><thead><tr><th>ID</th><th>Data</th><th>Hora</th><th>Nome</th><th>Status</th><th>Ação</th></tr></thead><tbody>';
             reservas.forEach(reserva => {
@@ -146,7 +146,7 @@ async function buscarReservasPorMesa(event) {
     } catch (error) {
         if (error.message.includes('Nenhuma reserva encontrada')) {
             const listaReservas = document.getElementById('lista-reservas-mesa');
-            listaReservas.innerHTML = '<p>Não há reservas para esta mesa.</p>';
+            listaReservas.innerHTML = '<p>Não há reservas para esta mesa</p>';
             document.getElementById('reservas-mesa').style.display = 'block';
         } else {
             showMessage('Erro ao buscar reservas: ' + error.message, true);
@@ -158,7 +158,7 @@ async function liberarMesa(event) {
     event.preventDefault();
     const numeroMesa = document.getElementById('mesa_liberar').value;
     if (!numeroMesa) {
-        showMessage('Por favor, selecione uma mesa.', true);
+        showMessage('Por favor, selecione uma mesa', true);
         return;
     }
     try {
@@ -166,7 +166,7 @@ async function liberarMesa(event) {
         showMessage(response.message);
         carregarMesas();
     } catch (error) {
-        showMessage('Erro ao liberar mesa: ' + error.message, true);
+        showMessage('Erro ao liberar mesa ' + error.message, true);
     }
 }
 function preencherReservaId(id) {

@@ -1,5 +1,6 @@
 let currentReservaId = null; 
-let currentReservaData = null; 
+let currentReservaData = null;
+
 document.addEventListener("DOMContentLoaded", function() {
     carregarMesasParaSelect("numero_mesa");
     carregarMesasParaSelect("edit_numero_mesa_cliente");
@@ -11,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("edit-reserva-form-cliente").addEventListener("submit", salvarEdicaoReservaCliente);
     document.getElementById("numero_mesa").addEventListener("change", notificarSelecaoMesa);
 });
+
 async function carregarMesasParaSelect(selectId) {
     try {
         const mesas = await fetchAPI("/mesas/");
@@ -36,6 +38,7 @@ async function carregarMesasParaSelect(selectId) {
         showMessage(`Erro ao carregar mesas para ${selectId}: ` + error.message, true);
     }
 }
+
 function notificarSelecaoMesa(event) {
     const mesaSelecionada = event.target.value;
     if (mesaSelecionada) {
@@ -43,6 +46,7 @@ function notificarSelecaoMesa(event) {
         showMessage(`Mesa ${mesaSelecionada} selecionada. ${textoMesa.split(' - ')[0]}`, false);
     }
 }
+
 async function fazerReserva(event) {
     event.preventDefault();
     const nome_responsavel = document.getElementById("nome_responsavel").value;
@@ -50,8 +54,9 @@ async function fazerReserva(event) {
     const hora = document.getElementById("hora").value;
     const qtde_pessoas = parseInt(document.getElementById("qtde_pessoas").value);
     const numero_mesa = parseInt(document.getElementById("numero_mesa").value);
+    
     if (!nome_responsavel || !data || !hora || isNaN(qtde_pessoas) || isNaN(numero_mesa)) {
-        showMessage("Por favor, preencha todos os campos corretamente.", true);
+        showMessage("Por favor, preencha todos os campos corretamente", true);
         return;
     }
 
@@ -65,15 +70,12 @@ async function fazerReserva(event) {
         };
 
         const response = await fetchAPI("/reservas", "POST", reservaData);
-        window.alert(`Reserva criada com sucesso! Seu número de reserva é: ${response.reservaId}`);
-
+        window.alert(`Reserva criada com sucesso! Seu número de reserva é ${response.reservaId}`);
         
         document.getElementById("reserva-form").reset();
-
-       
         carregarMesasParaSelect("numero_mesa");
     } catch (error) {
-        window.alert("Erro ao fazer reserva: " + error.message, true);
+        window.alert("Erro ao fazer reserva " + error.message, true);
     }
 }
 
@@ -82,7 +84,7 @@ async function consultarReserva(event) {
     const reservaIdInput = document.getElementById("reserva_id");
     const reservaId = reservaIdInput.value;
     if (!reservaId) {
-        showMessage("Por favor, informe o número da reserva.", true);
+        showMessage("Por favor, informe o número da reserva", true);
         return;
     }
     try {
@@ -108,7 +110,7 @@ async function consultarReserva(event) {
         } else {
             btnEditar.style.display = "none";
             btnExcluir.style.display = "none";
-            showMessage("Reservas já atendidas ou canceladas não podem ser editadas ou excluídas.", false);
+            showMessage("Reservas já atendidas ou canceladas não podem ser editadas ou excluídas", false);
         }
     } catch (error) {
         showMessage("Erro ao consultar reserva: " + error.message, true);
@@ -119,6 +121,7 @@ async function consultarReserva(event) {
         currentReservaData = null;
     }
 }
+
 function abrirModalEdicaoCliente() {
     if (!currentReservaData) {
         showMessage("Nenhuma reserva carregada para edição.", true);
@@ -132,9 +135,11 @@ function abrirModalEdicaoCliente() {
     document.getElementById("edit_numero_mesa_cliente").value = currentReservaData.numero_mesa;
     document.getElementById("editReservaModalCliente").style.display = "block";
 }
+
 function fecharModalEdicaoCliente() {
     document.getElementById("editReservaModalCliente").style.display = "none";
 }
+
 async function salvarEdicaoReservaCliente(event) {
     event.preventDefault();
     const reservaId = document.getElementById("edit_reserva_id_cliente").value;
@@ -143,8 +148,9 @@ async function salvarEdicaoReservaCliente(event) {
     const hora = document.getElementById("edit_hora_cliente").value;
     const qtde_pessoas = parseInt(document.getElementById("edit_qtde_pessoas_cliente").value);
     const numero_mesa = parseInt(document.getElementById("edit_numero_mesa_cliente").value);
+    
     if (!nome_responsavel || !data || !hora || isNaN(qtde_pessoas) || isNaN(numero_mesa)) {
-        showMessage("Por favor, preencha todos os campos corretamente no formulário de edição.", true);
+        showMessage("Por favor, preencha todos os campos corretamente no formulário de edição", true);
         return;
     }
 
@@ -166,9 +172,10 @@ async function salvarEdicaoReservaCliente(event) {
         window.alert("Erro ao salvar alterações da reserva: " + error.message, true);
     }
 }
+
 async function excluirReservaCliente() {
     if (!currentReservaId) {
-        showMessage("Nenhuma reserva selecionada para exclusão.", true);
+        showMessage("Nenhuma reserva selecionada para exclusão", true);
         return;
     }
 
@@ -178,7 +185,7 @@ async function excluirReservaCliente() {
 
     try {
         const response = await fetchAPI(`/reservas/${currentReservaId}`, 'DELETE');
-        window.alert("Reserva excluída com sucesso!");
+        window.alert("Reserva excluída com sucesso");
         document.getElementById("reserva-info").innerHTML = "";
         document.getElementById("reserva-detalhes").style.display = "none";
         document.getElementById("btn-editar-reserva").style.display = "none";
@@ -188,9 +195,10 @@ async function excluirReservaCliente() {
         currentReservaData = null;
         carregarMesasParaSelect("numero_mesa");
     } catch (error) {
-        showMessage('Erro ao excluir reserva: ' + error.message, true);
+        showMessage('Erro ao excluir reserva ' + error.message, true);
     }
 }
+
 function traduzirStatus(status) {
     const statusMap = {
         "pendente": "Pendente",
@@ -199,11 +207,11 @@ function traduzirStatus(status) {
     };
     return statusMap[status] || status;
 }
+
 function getTodayFormatted() {
     const today = new Date();
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0'); 
+    const month = String(today.getMonth() + 1).padStart(2, '0');
     const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
-

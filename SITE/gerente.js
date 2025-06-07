@@ -78,7 +78,7 @@ async function carregarReservas() {
 
         if (reservas.length === 0) {
             const tr = document.createElement('tr');
-            tr.innerHTML = '<td colspan="9" style="text-align: center;">Não há reservas cadastradas.</td>'; 
+            tr.innerHTML = '<td colspan="9" style="text-align: center;">Não há reservas cadastradas</td>'; 
             tbody.appendChild(tr);
         } else {
             reservas.forEach(reserva => {
@@ -101,7 +101,7 @@ async function carregarReservas() {
             });
         }
     } catch (error) {
-        showMessage('Erro ao carregar reservas: ' + error.message, true);
+        showMessage('Erro ao carregar reservas' + error.message, true);
     }
 }
 
@@ -136,7 +136,7 @@ async function carregarMesas() {
         });
 
     } catch (error) {
-        showMessage('Erro ao carregar mesas: ' + error.message, true);
+        showMessage('Erro ao carregar mesas' + error.message, true);
     }
 }
 
@@ -154,7 +154,7 @@ async function carregarMesasParaModalEdicao() {
             selectMesaEdicao.appendChild(option);
         });
     } catch (error) {
-        showMessage('Erro ao carregar mesas para edição: ' + error.message, true);
+        showMessage('Erro ao carregar mesas para edição' + error.message, true);
     }
 }
 
@@ -251,7 +251,7 @@ async function salvarEdicaoReserva(event) {
         carregarReservas();
         carregarMesas(); 
     } catch (error) {
-        showMessage('Erro ao salvar alterações da reserva: ' + error.message, true);
+        showMessage('Erro ao salvar alterações da reserva' + error.message, true);
     }
 }
 async function excluirReserva(reservaId) {
@@ -264,7 +264,7 @@ async function excluirReserva(reservaId) {
         carregarReservas(); 
         carregarMesas(); 
     } catch (error) {
-        showMessage('Erro ao excluir reserva: ' + error.message, true);
+        showMessage('Erro ao excluir reserva' + error.message, true);
     }
 }
 
@@ -284,7 +284,7 @@ async function gerarRelatorioPorPeriodo(event) {
 
         if (reservas.length === 0) {
             const tr = document.createElement('tr');
-            tr.innerHTML = '<td colspan="8" style="text-align: center;">Não há reservas no período selecionado.</td>';
+            tr.innerHTML = '<td colspan="8" style="text-align: center;">Não há reservas no período selecionado</td>';
             tbody.appendChild(tr);
         } else {
             reservas.forEach(reserva => {
@@ -307,7 +307,7 @@ async function gerarRelatorioPorPeriodo(event) {
     } catch (error) {
         if (error.message.includes('Nenhuma reserva encontrada')) {
             const tbody = document.querySelector('#tabela-relatorio-periodo tbody');
-            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Não há reservas no período selecionado.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align: center;">Não há reservas no período selecionado</td></tr>';
             document.getElementById('relatorio-periodo-resultado').style.display = 'block';
         } else {
             showMessage('Erro ao gerar relatório: ' + error.message, true);
@@ -340,7 +340,7 @@ async function gerarRelatorioPorMesa(event) {
 
         if (reservas.length === 0) {
             const tr = document.createElement('tr');
-            tr.innerHTML = '<td colspan="7" style="text-align: center;">Não há reservas para esta mesa no período selecionado.</td>';
+            tr.innerHTML = '<td colspan="7" style="text-align: center;">Não há reservas para esta mesa no período selecionado</td>';
             tbody.appendChild(tr);
         } else {
             reservas.forEach(reserva => {
@@ -362,7 +362,7 @@ async function gerarRelatorioPorMesa(event) {
     } catch (error) {
         if (error.message.includes('Nenhuma reserva encontrada')) {
             const tbody = document.querySelector('#tabela-relatorio-mesa tbody');
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Não há reservas para esta mesa no período selecionado.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Não há reservas para esta mesa no período selecionado</td></tr>';
             document.getElementById('relatorio-mesa-resultado').style.display = 'block';
         } else {
             showMessage('Erro ao gerar relatório: ' + error.message, true);
@@ -394,7 +394,7 @@ async function gerarRelatorioPorGarcom(event) {
 
         if (reservas.length === 0) {
             const tr = document.createElement('tr');
-            tr.innerHTML = '<td colspan="7" style="text-align: center;">Não há reservas atendidas por este garçom no período selecionado.</td>';
+            tr.innerHTML = '<td colspan="7" style="text-align: center;">Não há reservas atendidas por este garçom no período selecionado</td>';
             tbody.appendChild(tr);
         } else {
             reservas.forEach(reserva => {
@@ -416,7 +416,7 @@ async function gerarRelatorioPorGarcom(event) {
     } catch (error) {
         if (error.message.includes('Nenhuma reserva atendida encontrada')) {
             const tbody = document.querySelector('#tabela-relatorio-garcom tbody');
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Não há reservas atendidas por este garçom no período selecionado.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center;">Não há reservas atendidas por este garçom no período selecionado</td></tr>';
             document.getElementById('relatorio-garcom-resultado').style.display = 'block';
         } else {
             showMessage('Erro ao gerar relatório: ' + error.message, true);

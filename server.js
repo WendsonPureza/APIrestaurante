@@ -16,14 +16,14 @@ app.use((req, res, next) => {
 
 const db = new sqlite3.Database("./restaurant.db", (err) => {
   if (err) {
-    console.error("Error opening database:", err.message);
+    console.error("Erro ao abrir o banco de dados", err.message);
   } else {
-    console.log("Connected to the SQLite database.");
+    console.log("Conectado ao banco de dados SQLite");
   }
 });
 
 app.get("/", (req, res) => {
-  res.status(200).json({ message: "Restaurant Reservation API is running!" });
+  res.status(200).json({ message: "API de Reservas do Restaurante está funcionando" });
 });
 
 const reservasRoutes = require("./reservas")(db);
@@ -37,52 +37,52 @@ app.use("/garcons", garconsRoutes);
 app.use("/relatorios", relatoriosRoutes);
 
 app.listen(port, '0.0.0.0', () => {
-  console.log(`Server listening at http://0.0.0.0:${port}`);
-  console.log("✅ Limpeza automática de reservas configurada");
+  console.log(`Servidor ouvindo em http://0.0.0.0:${port}`);
+  console.log("Sistema de limpeza automática de reservas ligado");
 });
 
-// Função para limpar reservas e resetar contador
+
 function limparReservasAoFechar() {
-  // Primeiro limpa as reservas
+  
   db.run("DELETE FROM reservas", function(err) {
     if (err) {
-      console.error('❌ Erro ao limpar reservas:', err.message);
+      console.error('Erro ao limpar as reservas', err.message);
     } else {
-      console.log(`🧹 Reservas limpas automaticamente: ${this.changes} removidas`);
+      console.log(`Reservas limpas automaticamente ${this.changes} removidas`);
       
-      // Depois reseta o contador para começar do ID 1
+      
       db.run("DELETE FROM sqlite_sequence WHERE name='reservas'", function(err) {
         if (err) {
-          console.error('❌ Erro ao resetar contador:', err.message);
+          console.error('Erro ao resetar o contador de reservas', err.message);
         } else {
-          console.log('🔄 Contador de reservas resetado - próxima reserva será ID 1');
+          console.log('Contador de reservas resetado - a próxima reserva será ID 1');
         }
       });
     }
   });
 }
 
-// Modificado para incluir limpeza de reservas
+
 process.on("SIGINT", () => {
-  console.log('\n🔄 Servidor encerrando... Limpando reservas...');
+  console.log('\nServidor encerrando Limpando as reservas');
   
   limparReservasAoFechar();
   
-  // Espera um pouco para a limpeza completar, depois fecha o banco
+  
   setTimeout(() => {
     db.close((err) => {
       if (err) {
         console.error(err.message);
       }
-      console.log("Closed the database connection.");
+      console.log("Conexão com o banco de dados fechada");
       process.exit(0);
     });
-  }, 1000); // Espera 1 segundo
+  }, 1000); 
 });
 
-// Adiciona suporte para SIGTERM também
+
 process.on("SIGTERM", () => {
-  console.log('\n🔄 Aplicação encerrando... Limpando reservas...');
+  console.log('\nAplicação encerrando Limpando as reservas');
   
   limparReservasAoFechar();
   
@@ -91,7 +91,7 @@ process.on("SIGTERM", () => {
       if (err) {
         console.error(err.message);
       }
-      console.log("Closed the database connection.");
+      console.log("Conexão com o banco de dados fechada");
       process.exit(0);
     });
   }, 1000);

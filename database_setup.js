@@ -2,14 +2,14 @@ const sqlite3 = require("sqlite3").verbose();
 
 const db = new sqlite3.Database("./restaurant.db", (err) => {
   if (err) {
-    console.error("Error opening database:", err.message);
+    console.error("Erro ao abrir o banco de dados", err.message);
   } else {
-    console.log("Connected to the SQLite database.");
-    setupDatabase();
+    console.log("Conectado ao banco de dados SQLite");
+    configurarBancoDeDados();
   }
 });
 
-function setupDatabase() {
+function configurarBancoDeDados() {
   db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS mesas (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -18,17 +18,18 @@ function setupDatabase() {
       status TEXT NOT NULL DEFAULT 'livre' CHECK (status IN ('livre', 'reservada', 'ocupada'))
     )`, (err) => {
       if (err) {
-        console.error("Error creating mesas table:", err.message);
-        closeDb();
+        console.error("Erro ao criar a tabela de mesas:", err.message);
+        fecharConexao();
         return;
       }
-      console.log("Table mesas created or already exists.");
+      console.log("Tabela de mesas criada ou já existente");
+
       db.get("SELECT COUNT(*) as count FROM mesas", (err, row) => {
         if (err) {
-          console.error("Error checking mesas count:", err.message);
-          createGarconsTable();
+          console.error("Erro ao verificar quantidade de mesas:", err.message);
+          criarTabelaGarcons();
         } else if (row.count === 0) {
-          const insertMesa = db.prepare("INSERT INTO mesas (numero_mesa, capacidade) VALUES (?, ?)");
+          const inserirMesa = db.prepare("INSERT INTO mesas (numero_mesa, capacidade) VALUES (?, ?)");
           const mesas = [
             { numero: 1, capacidade: 2 }, { numero: 2, capacidade: 2 },
             { numero: 3, capacidade: 3 }, { numero: 4, capacidade: 3 },
@@ -36,54 +37,55 @@ function setupDatabase() {
             { numero: 7, capacidade: 4 }, { numero: 8, capacidade: 5 },
             { numero: 9, capacidade: 5 }, { numero: 10, capacidade: 5 },
           ];
-          mesas.forEach((m) => insertMesa.run(m.numero, m.capacidade));
-          insertMesa.finalize((err) => {
-            if (err) console.error("Error populating mesas:", err.message);
-            else console.log("Mesas table populated.");
-            createGarconsTable();
+          mesas.forEach((m) => inserirMesa.run(m.numero, m.capacidade));
+          inserirMesa.finalize((err) => {
+            if (err) console.error("Erro ao popular a tabela de mesas", err.message);
+            else console.log("Tabela de mesas populada.");
+            criarTabelaGarcons();
           });
         } else {
-          console.log("Mesas table already populated.");
-          createGarconsTable();
+          console.log("Tabela de mesas já está populada");
+          criarTabelaGarcons();
         }
       });
     });
   });
 }
 
-function createGarconsTable() {
+function criarTabelaGarcons() {
   db.run(`CREATE TABLE IF NOT EXISTS garcons (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       nome TEXT UNIQUE NOT NULL
     )`, (err) => {
     if (err) {
-      console.error("Error creating garcons table:", err.message);
-      closeDb();
+      console.error("Erro ao criar a tabela de garçons", err.message);
+      fecharConexao();
       return;
     }
-    console.log("Table garcons created or already exists.");
+    console.log("Tabela de garçons criada ou já existente");
+
     db.get("SELECT COUNT(*) as count FROM garcons", (err, row) => {
       if (err) {
-        console.error("Error checking garcons count:", err.message);
-        createReservasTable();
+        console.error("Erro ao verificar quantidade de garçons", err.message);
+        criarTabelaReservas();
       } else if (row.count === 0) {
-        const insertGarcon = db.prepare("INSERT INTO garcons (nome) VALUES (?)");
+        const inserirGarcon = db.prepare("INSERT INTO garcons (nome) VALUES (?)");
         const garcons = ["Carlos", "Ana", "Pedro", "Sofia", "Miguel"];
-        garcons.forEach((g) => insertGarcon.run(g));
-        insertGarcon.finalize((err) => {
-          if (err) console.error("Error populating garcons:", err.message);
-          else console.log("Garcons table populated.");
-          createReservasTable();
+        garcons.forEach((g) => inserirGarcon.run(g));
+        inserirGarcon.finalize((err) => {
+          if (err) console.error("Erro ao popular a tabela de garçons", err.message);
+          else console.log("Tabela de garçons populada.");
+          criarTabelaReservas();
         });
       } else {
-        console.log("Garcons table already populated.");
-        createReservasTable();
+        console.log("Tabela de garçons já está populada");
+        criarTabelaReservas();
       }
     });
   });
 }
 
-function createReservasTable() {
+function criarTabelaReservas() {
   db.run(`CREATE TABLE IF NOT EXISTS reservas (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       data TEXT NOT NULL,
@@ -98,20 +100,20 @@ function createReservasTable() {
       UNIQUE (data, hora, mesa_id)
     )`, (err) => {
     if (err) {
-      console.error("Error creating reservas table:", err.message);
+      console.error("Erro ao criar a tabela de reservas", err.message);
     } else {
-      console.log("Table reservas created or already exists.");
+      console.log("Tabela de reservas criada ou já existente");
     }
-    closeDb();
+    fecharConexao();
   });
 }
 
-function closeDb() {
+function fecharConexao() {
   db.close((err) => {
     if (err) {
-      console.error("Error closing database:", err.message);
+      console.error("Erro ao fechar o banco de dados", err.message);
     } else {
-      console.log("Database setup complete. Connection closed.");
+      console.log("Configuração do banco de dados concluída. Conexão fechada");
     }
   });
 }
