@@ -190,44 +190,48 @@ module.exports = (db) => {
 
     db.get("SELECT mesa_id, status FROM reservas WHERE id = ?", [id], (err, reserva) => {
       if (err) {
-        console.error("Error finding reservation for deletion:", err.message);
-        return res.status(500).json({ error: "Erro ao buscar reserva para exclusão" });
+        console.error("Error finding reservation for cancellation:", err.message);
+        return res.status(500).json({ error: "Erro ao buscar reserva para cancelamento" });
       }
       if (!reserva) {
         return res.status(404).json({ error: `Reserva com ID ${id} não encontrada` });
       }
 
+      if (reserva.status === 'cancelada') {
+        return res.status(400).json({ error: `Reserva com ID ${id} já está cancelada` });
+      }
+
       const { mesa_id, status: reservaStatus } = reserva;
 
-      db.run("DELETE FROM reservas WHERE id = ?", [id], function (err) {
+      db.run("UPDATE reservas SET status = 'cancelada' WHERE id = ?", [id], function (err) {
         if (err) {
-          console.error("Error deleting reservation:", err.message);
-          return res.status(500).json({ error: "Erro ao excluir a reserva" });
+          console.error("Error cancelling reservation:", err.message);
+          return res.status(500).json({ error: "Erro ao cancelar a reserva" });
         }
         if (this.changes === 0) {
-          return res.status(404).json({ error: `Reserva com ID ${id} não encontrada para exclusão` });
+          return res.status(404).json({ error: `Reserva com ID ${id} não encontrada para cancelamento` });
         }
 
         if (reservaStatus === 'pendente') {
             db.get("SELECT COUNT(*) as count FROM reservas WHERE mesa_id = ? AND status = 'pendente'", [mesa_id], (err, result) => {
                 if (err) {
-                    console.error(`Error checking other reservations for table ${mesa_id} after deletion:`, err.message);
-                    res.status(200).json({ message: `Reserva ${id} excluída com sucesso. Erro ao verificar status da mesa.` });
+                    console.error(`Error checking other reservations for table ${mesa_id} after cancellation:`, err.message);
+                    res.status(200).json({ message: `Reserva ${id} cancelada com sucesso. Erro ao verificar status da mesa.` });
                 } else if (result.count === 0) {
                     db.run("UPDATE mesas SET status = 'livre' WHERE id = ? AND status = 'reservada'", [mesa_id], (updateErr) => {
                         if (updateErr) {
-                            console.error(`Error updating table status for mesa_id ${mesa_id} after deletion:`, updateErr.message);
-                            res.status(200).json({ message: `Reserva ${id} excluída com sucesso. Erro ao atualizar status da mesa.` });
+                            console.error(`Error updating table status for mesa_id ${mesa_id} after cancellation:`, updateErr.message);
+                            res.status(200).json({ message: `Reserva ${id} cancelada com sucesso. Erro ao atualizar status da mesa.` });
                         } else {
-                            res.status(200).json({ message: `Reserva ${id} excluída com sucesso. Status da mesa atualizado para livre.` });
+                            res.status(200).json({ message: `Reserva ${id} cancelada com sucesso. Status da mesa atualizado para livre.` });
                         }
                     });
                 } else {
-                    res.status(200).json({ message: `Reserva ${id} excluída com sucesso. Mesa permanece reservada por outras reservas.` });
+                    res.status(200).json({ message: `Reserva ${id} cancelada com sucesso. Mesa permanece reservada por outras reservas.` });
                 }
             });
         } else {
-             res.status(200).json({ message: `Reserva ${id} excluída com sucesso.` });
+             res.status(200).json({ message: `Reserva ${id} cancelada com sucesso.` });
         }
       });
     });

@@ -7,11 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const hoje = getTodayFormatted();
     document.getElementById('data_inicio').value = hoje;
     document.getElementById('data_fim').value = hoje;
-    document.getElementById('edit_data').min = hoje; 
     document.getElementById('relatorio-periodo-form').addEventListener('submit', gerarRelatorioPorPeriodo);
     document.getElementById('relatorio-mesa-form').addEventListener('submit', gerarRelatorioPorMesa);
     document.getElementById('relatorio-garcom-form').addEventListener('submit', gerarRelatorioPorGarcom);
-    document.getElementById('edit-reserva-form').addEventListener('submit', salvarEdicaoReserva); 
 });
 
 function adicionarEstilosTabs() {
@@ -93,8 +91,6 @@ async function carregarReservas() {
                     <td>${traduzirStatus(reserva.status)}</td>
                     <td>${reserva.garcom_atendimento || '-'}</td>
                     <td>
-                        <button class="btn btn-sm" onclick="abrirModalEdicao(${reserva.id})">Editar</button>
-                        <button class="btn btn-sm btn-danger" onclick="excluirReserva(${reserva.id})">Excluir</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -254,20 +250,6 @@ async function salvarEdicaoReserva(event) {
         showMessage('Erro ao salvar alterações da reserva' + error.message, true);
     }
 }
-async function excluirReserva(reservaId) {
-    if (!confirm(`Tem certeza que deseja excluir a reserva ${reservaId}?`)) {
-        return;
-    }
-    try {
-        const response = await fetchAPI(`/reservas/${reservaId}`, 'DELETE');
-        showMessage(response.message);
-        carregarReservas(); 
-        carregarMesas(); 
-    } catch (error) {
-        showMessage('Erro ao excluir reserva' + error.message, true);
-    }
-}
-
 async function gerarRelatorioPorPeriodo(event) {
     event.preventDefault();
     const dataInicio = document.getElementById('data_inicio').value;
